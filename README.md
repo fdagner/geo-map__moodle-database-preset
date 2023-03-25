@@ -1,6 +1,6 @@
 # Geo Map
 
-Geo is a preset for the Moodle activity database.
+Geo Map is a preset for the Moodle activity database.
 
 Leaflet, a JS library for interactive maps. https://leafletjs.com
 (c) 2010-2022 Vladimir Agafonkin, (c) 2010-2011 CloudMade
