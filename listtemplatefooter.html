@@ -1,0 +1,17 @@
+}, false);
+} );
+</script>
+
+<script>
+const mapalert = sessionStorage.getItem('mapalert');
+if(mapalert){
+    console.log('mapalert exists');
+document.getElementById("hinweis").style.display = "none";
+window.setTimeout(function() {document.getElementById("btn1").click();}, 1000);
+}else{
+    console.log('mapalert is not found');
+}
+</script>
+
+
+
