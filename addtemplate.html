@@ -1,0 +1,86 @@
+<style>
+	#map { width:100%;max-width:1400px;aspect-ratio: 8/4;}
+#[[Koordinate#id]] {
+    pointer-events: none; 
+background-color: #f5f5f5;
+}
+	  </style>
+   <p>Klicke auf die Karte um die gewünschten Koordinaten zu erhalten.</p>
+   <div id="map"></div>
+   <script>
+	   var map = L.map('map').setView([49,10], 2);
+	   L.tileLayer('https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png', {
+		   maxZoom: 19,
+		   attribution: '© OpenStreetMap'
+	   }).addTo(map);
+
+   </script>
+   <script>
+   var coordinates="";
+   var popup = L.popup();
+	   function onMapClick(e) {
+		   popup
+			   .setLatLng(e.latlng)
+			   .setContent('Koordinate:  ' + e.latlng.toString().replace("LatLng",""))
+			   .openOn(map);
+   coordinates = e.latlng.toString().replace("LatLng","").replace("(","").replace(")","");      
+   document.querySelector("[title='Koordinate'] input.basefieldinput").value=coordinates;
+	   }
+   
+	   map.on('click', onMapClick);
+   map.addControl( new L.Control.Search({
+		url: 'https://nominatim.openstreetmap.org/search?format=json&q={s}',
+		jsonpParam: 'json_callback',
+		propertyName: 'display_name',
+		propertyLoc: ['lat','lon'],
+		marker: L.circleMarker([0,0],{radius:30}),
+		autoCollapse: true,
+		autoType: false,
+		minLength: 2,
+               zoom: 14
+	}) );
+const ZoomViewer = L.Control.extend({
+		onAdd() {
+			const container = L.DomUtil.create('div');
+			const gauge = L.DomUtil.create('div');
+			container.style.width = '200px';
+			container.style.background = 'rgba(255,255,255,0.5)';
+			container.style.textAlign = 'left';
+			map.on('zoomstart zoom zoomend', (ev) => {
+				gauge.innerHTML = `Zoom level: ${map.getZoom()}`;
+			});
+			container.appendChild(gauge);
+			return container;
+		}
+	});
+ const zoomViewerControl = (new ZoomViewer()).addTo(map);
+   </script><table class="table table-striped" style="width:100%;max-width:1000px;">
+   <tbody><tr class="">
+   <td class="template-field cell c0" style="">Koordinaten: </td>
+   <td class="template-token cell c1 lastcol" style=""><p>[[Koordinate]]</p></td>
+   </tr>
+   <tr class="">
+   <td class="template-field cell c0" style="">CSS-Farbe des Markers: </td>
+   <td class="template-token cell c1 lastcol" style=""><p>[[CSS-Farbe]]</p></td>
+   </tr>
+   <tr class="">
+   <td class="template-field cell c0" style="">Titel</td>
+   <td class="template-token cell c1 lastcol" style="">[[Beschreibung]]</td>
+   </tr>
+   <tr class="">
+   <td class="template-field cell c0" style="">Lade hier ein Foto hoch: </td>
+   <td class="template-token cell c1 lastcol" style="">[[Foto]]</td>
+   </tr>
+<tr class="">
+   <td class="template-field cell c0" style="">Beschreibung: </td>
+   <td class="template-token cell c1 lastcol" style="">[[Textfeld]]</td>
+   </tr>
+   </tbody>
+   </table>
+   <div class="hidden">
+   <label for="[[ID#id]]"><span class="accesshide">ID</span></label>
+   <input class="basefieldinput form-control d-inline mod-data-input" type="text" name="[[ID#id]]" id="[[ID#id]]" value=""></div>
+   <script>
+   let idnummer = Math.round(Date.now() + Math.random());
+   document.getElementById("[[ID#id]]").value = idnummer;
+   </script> 

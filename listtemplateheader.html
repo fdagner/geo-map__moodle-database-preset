@@ -1,0 +1,156 @@
+<script>
+    // Kartenebenen: 1 = OpenStreetMap, 2 = Topographische Karte, 3 = Luftbild, 4 = ÖPNV, 5 = Stumme Karte (Map layer)
+     let maplayer = 1; 
+    // Zoomstufe der Karte (Zoom level)
+     let zoom = 2.4; 
+    // Koordinate zum Ausrichten der Karte (Coordinate)
+     let center = [0, 0]; 
+    </script>
+        <script>
+            // Run once per session.
+            if ((typeof sessionStorage !== 'undefined') &&
+                (sessionStorage.getItem('ChangeEntriesReload') === null)) {
+        
+                // Set url for 1000 entries per site.
+                const params = new URLSearchParams(location.search);
+                params.set('perpage', 1000);
+                window.history.replaceState({}, '', `${location.pathname}?${params}`);
+                // Reload page.
+                window.location.reload();
+                console.log('ok');
+                sessionStorage.setItem('ChangeEntriesReload', true);
+            }
+        </script>
+        <div class="text-right d-print-none ion-hide">
+        <label for="checkbox1" onClick="save()"><input type="checkbox" id="checkbox1"> Automatisch
+            aktualisieren</input></label>
+    </div>
+    <script>
+        // Save status of checkbox.
+        function save() {
+            var checkbox = document.getElementById("checkbox1");
+            localStorage.setItem("checkbox1", checkbox.checked);
+            location.reload();
+        }
+        // Get status of checkbox.
+        var checked = JSON.parse(localStorage.getItem("checkbox1"));
+        document.getElementById("checkbox1").checked = checked;
+    
+        // Reload if checkbox is checked.
+        if (checkbox1.checked == true) {
+    
+     // Set single div every 15 sec.
+            setInterval(function () {
+    window.location.reload(true);
+               }, 15000);
+    
+    document.addEventListener("DOMContentLoaded", function(){
+      window.location.href = '#usermap';
+    });
+    }
+    </script>
+        <a href="#usermap">
+        </a>
+        <div class="boardmap" id="usermap">
+        <div id="mapheaderlist" class="bg-primary text-white"><h3 style="font-size: xx-large;padding-top: 6px"><i class="fa fa-users"></i> Interaktive Karte</h3> Klicke auf 👉 "Eintrag hinzufügen", um einen Pin hinzuzufügen.</div>
+        <div id="map" style="background-color:#f5f5f5;padding: 4px;"><span id="hinweis"><h4>Hinweis</h4>
+        Diese Anwendung lädt Kartenmaterial von <a href="https://www.fossgis.de/datenschutzerkl%C3%A4rung/">OpenStreetMap</a>, <a href="https://opentopomap.org">OpenTopoMap</a>, <a href="https://memomaps.de/">memomaps.de</a>, <a href="https://stamen.com">stamen.com</a>, <a href="https://arcgisonline.com">arcgisonline.com</a><br><br><input type="button" value="Ja, das ist in Ordnung" id="btn1" class="btn-primary"></input></span></div>
+        
+        <script>
+        window.addEventListener("load", function() 
+        {
+        let schaltflaeche1 = document.getElementById("btn1");
+        schaltflaeche1.addEventListener("click", function() 
+        {
+        sessionStorage.setItem("mapalert", "ok");
+        document.getElementById("hinweis").style.display = "none";
+        var topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxZoom: 17,
+        attribution: 'Map data: &copy; <a href="https://www.fossgis.de/datenschutzerkl%C3%A4rung/">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+        });
+        var WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        });
+        var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+        });
+        
+        var OPNV = L.tileLayer('https://tileserver.memomaps.de/tilegen/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: 'Map <a href="https://memomaps.de/">memomaps.de</a> <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+    
+    var Stamen_TonerBackground = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.{ext}', {
+        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        subdomains: 'abcd',
+        minZoom: 0,
+        maxZoom: 20,
+        ext: 'png'
+    });
+    
+    const layer = { 
+        "titel" : osm,
+        "isbn" : "344254565X",
+        "autor" : "Pratchet",
+        "pubdate" : "15.8.2005"
+    };
+    
+    switch (maplayer) {
+        case 1:
+           maplayer = osm;
+            break;
+        case 2:
+            maplayer = topo;
+            break;
+         case 3:
+            maplayer = WorldImagery;
+            break;
+         case 4:
+            maplayer = OPNV;
+            break;
+         case 5:
+            maplayer = Stamen_TonerBackground;
+            break;
+    default:
+    maplayer = osm;
+        };
+    let layers = maplayer;
+    console.log(layers);
+        var map = L.map('map', {
+        center: center,
+        zoom: zoom,
+        layers: layers,
+        fullscreenControl: {
+        pseudoFullscreen: true
+        }
+        });     
+    
+         var baseMaps = {
+        "Topographisch": topo,
+        "Luftbild":  WorldImagery,
+        "ÖPNV": OPNV,
+         "OpenStreetMap": osm,
+        "Stumme Karte": Stamen_TonerBackground,
+         };
+        var layerControl = L.control.layers(baseMaps).addTo(map);
+    
+    L.control.polylineMeasure(options).addTo(map);
+        
+    const ZoomViewer = L.Control.extend({
+            onAdd() {
+                const container = L.DomUtil.create('div');
+                const gauge = L.DomUtil.create('div');
+                container.style.width = '200px';
+                container.style.background = 'rgba(255,255,255,0.5)';
+                container.style.textAlign = 'left';
+                map.on('zoomstart zoom zoomend', (ev) => {
+                    gauge.innerHTML = `Zoom level: ${map.getZoom()}`;
+                });
+                container.appendChild(gauge);
+                return container;
+            }
+        });
+     const zoomViewerControl = (new ZoomViewer()).addTo(map);
+    
+    
