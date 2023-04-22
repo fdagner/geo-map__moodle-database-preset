@@ -133,7 +133,12 @@
          "OpenStreetMap": osm,
         "Stumme Karte": Stamen_TonerBackground,
          };
-        var layerControl = L.control.layers(baseMaps).addTo(map);
+    
+    let grid = L.latlngGraticule({ showLabel: true, fontColor: 'red', color: 'red', dashArray: [5, 5], zoomInterval: [ {start: 2, end: 3, interval: 30}, {start: 4, end: 4, interval: 10}, {start: 5, end: 7, interval: 5}, {start: 8, end: 9, interval: 0.5},  {start: 10, end: 12, interval: 0.25}  ], sides: [' N', ' S', ' O', ' W'], }); 
+    var cogrid = L.layerGroup([grid]); 
+    var overlayMaps = {"Gradnetz": cogrid};
+    
+    var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
     
     L.control.polylineMeasure(options).addTo(map);
         
@@ -152,5 +157,4 @@
             }
         });
      const zoomViewerControl = (new ZoomViewer()).addTo(map);
-    
-    
+     
