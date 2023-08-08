@@ -11,8 +11,6 @@ Users can add markers on an OpenStreetMap.
 
 ## Getting started
 
-Download the source code and zip the files WITHOUT parent folder or download release file. Create a "Database" activity in Moodle and then upload the ZIP file in the "Presets" tab under "Import".
-
 In the list view template, you can specify the zoom level and map orientation using the coordinate:
 <br>
 <code>
@@ -21,8 +19,8 @@ In the list view template, you can specify the zoom level and map orientation us
     // Zoomstufe der Karte (Zoom level)
      let zoom = 2.4; 
     // Koordinate zum Ausrichten der Karte (Coordinate)
-     let center = [0, 0]; 
-</code>
+     let center = [0, 0];
+     </code>
 <br>
 Don't forget to switch off the editor first!
 
