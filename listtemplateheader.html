@@ -1,5 +1,5 @@
 <script>
-    // Kartenebenen: 1 = OpenStreetMap, 2 = Topographische Karte, 3 = Luftbild, 4 = ÖPNV, 5 = Stumme Karte (Map layer)
+    // Kartenebenen: 1 = OpenStreetMap, 2 = Topographische Karte, 3 = Luftbild, 4 = ÖPNV (Map layer)
      let maplayer = 1; 
     // Zoomstufe der Karte (Zoom level)
      let zoom = 2.4; 
@@ -54,7 +54,7 @@
         <div class="boardmap" id="usermap">
         <div id="mapheaderlist" class="bg-primary text-white"><h3 style="font-size: xx-large;padding-top: 6px"><i class="fa fa-users"></i> Interaktive Karte</h3> Klicke auf 👉 "Eintrag hinzufügen", um einen Pin hinzuzufügen.</div>
         <div id="map" style="background-color:#f5f5f5;padding: 4px;"><span id="hinweis"><h4>Hinweis</h4>
-        Diese Anwendung lädt Kartenmaterial von <a href="https://www.fossgis.de/datenschutzerkl%C3%A4rung/">OpenStreetMap</a>, <a href="https://opentopomap.org">OpenTopoMap</a>, <a href="https://memomaps.de/">memomaps.de</a>, <a href="https://stamen.com">stamen.com</a>, <a href="https://arcgisonline.com">arcgisonline.com</a><br><br><input type="button" value="Ja, das ist in Ordnung" id="btn1" class="btn-primary"></input></span></div>
+        Diese Anwendung lädt Kartenmaterial von <a href="https://www.fossgis.de/datenschutzerkl%C3%A4rung/">OpenStreetMap</a>, <a href="https://opentopomap.org">OpenTopoMap</a>, <a href="https://memomaps.de/">memomaps.de</a>, <a href="https://arcgisonline.com">arcgisonline.com</a><br><br><input type="button" value="Ja, das ist in Ordnung" id="btn1" class="btn-primary"></input></span></div>
         
         <script>
         window.addEventListener("load", function() 
@@ -81,13 +81,6 @@
         attribution: 'Map <a href="https://memomaps.de/">memomaps.de</a> <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         });
     
-    var Stamen_TonerBackground = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.{ext}', {
-        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        subdomains: 'abcd',
-        minZoom: 0,
-        maxZoom: 20,
-        ext: 'png'
-    });
     
     const layer = { 
         "titel" : osm,
@@ -109,9 +102,6 @@
          case 4:
             maplayer = OPNV;
             break;
-         case 5:
-            maplayer = Stamen_TonerBackground;
-            break;
     default:
     maplayer = osm;
         };
@@ -131,7 +121,6 @@
         "Luftbild":  WorldImagery,
         "ÖPNV": OPNV,
          "OpenStreetMap": osm,
-        "Stumme Karte": Stamen_TonerBackground,
          };
     
     let grid = L.latlngGraticule({ showLabel: true, fontColor: 'red', color: 'red', dashArray: [5, 5], zoomInterval: [ {start: 2, end: 3, interval: 30}, {start: 4, end: 4, interval: 10}, {start: 5, end: 7, interval: 5}, {start: 8, end: 9, interval: 0.5},  {start: 10, end: 12, interval: 0.25}  ], sides: [' N', ' S', ' O', ' W'], }); 
