@@ -8,8 +8,8 @@ background-color: #f5f5f5;
    <p>Klicke auf die Karte um die gewünschten Koordinaten zu erhalten.</p>
    <div id="map"></div>
    <script>
-	   var map = L.map('map').setView([49,10], 2);
-	   L.tileLayer('https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png', {
+	   var map = new L.Map('map').setView([49,10], 2);
+	   new L.TileLayer('https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png', {
 		   maxZoom: 19,
 		   attribution: '© OpenStreetMap'
 	   }).addTo(map);
@@ -17,7 +17,7 @@ background-color: #f5f5f5;
    </script>
    <script>
    var coordinates="";
-   var popup = L.popup();
+   var popup = new L.Popup();
 	   function onMapClick(e) {
 		   popup
 			   .setLatLng(e.latlng)
@@ -28,18 +28,7 @@ background-color: #f5f5f5;
 	   }
    
 	   map.on('click', onMapClick);
-   map.addControl( new L.Control.Search({
-		url: 'https://nominatim.openstreetmap.org/search?format=json&q={s}',
-		jsonpParam: 'json_callback',
-		propertyName: 'display_name',
-		propertyLoc: ['lat','lon'],
-		marker: L.circleMarker([0,0],{radius:30}),
-		autoCollapse: true,
-		autoType: false,
-		minLength: 2,
-               zoom: 14
-	}) );
-const ZoomViewer = L.Control.extend({
+ const ZoomViewer = new L.Control.extend({
 		onAdd() {
 			const container = L.DomUtil.create('div');
 			const gauge = L.DomUtil.create('div');

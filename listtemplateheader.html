@@ -64,19 +64,19 @@
         {
         sessionStorage.setItem("mapalert", "ok");
         document.getElementById("hinweis").style.display = "none";
-        var topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        var topo = new L.TileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
         maxZoom: 17,
         attribution: 'Map data: &copy; <a href="https://www.fossgis.de/datenschutzerkl%C3%A4rung/">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
         });
-        var WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        var WorldImagery = new L.TileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
         });
-        var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        var osm = new L.TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OpenStreetMap'
         });
         
-        var OPNV = L.tileLayer('https://tileserver.memomaps.de/tilegen/{z}/{x}/{y}.png', {
+        var OPNV = new L.TileLayer('https://tileserver.memomaps.de/tilegen/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: 'Map <a href="https://memomaps.de/">memomaps.de</a> <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         });
@@ -107,7 +107,7 @@
         };
     let layers = maplayer;
     console.log(layers);
-        var map = L.map('map', {
+        var map = new L.Map('map', {
         center: center,
         zoom: zoom,
         layers: layers,
@@ -123,14 +123,9 @@
          "OpenStreetMap": osm,
          };
     
-    let grid = L.latlngGraticule({ showLabel: true, fontColor: 'red', color: 'red', dashArray: [5, 5], zoomInterval: [ {start: 2, end: 3, interval: 30}, {start: 4, end: 4, interval: 10}, {start: 5, end: 7, interval: 5}, {start: 8, end: 9, interval: 0.5},  {start: 10, end: 12, interval: 0.25}  ], sides: [' N', ' S', ' O', ' W'], }); 
-    var cogrid = L.layerGroup([grid]); 
-    var overlayMaps = {"Gradnetz": cogrid};
-    
-    var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
-    
-    L.control.polylineMeasure(options).addTo(map);
-        
+
+    var layerControl = new L.Control.Layers(baseMaps).addTo(map);
+           
     const ZoomViewer = L.Control.extend({
             onAdd() {
                 const container = L.DomUtil.create('div');
@@ -145,5 +140,5 @@
                 return container;
             }
         });
-     const zoomViewerControl = (new ZoomViewer()).addTo(map);
+    const zoomViewerControl = new ZoomViewer().addTo(map);
      
