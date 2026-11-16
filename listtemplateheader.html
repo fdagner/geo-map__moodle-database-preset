@@ -17,32 +17,28 @@
                 window.history.replaceState({}, '', `${location.pathname}?${params}`);
                 // Reload page.
                 window.location.reload();
-                console.log('ok');
                 sessionStorage.setItem('ChangeEntriesReload', true);
             }
         </script>
         <div class="text-right d-print-none ion-hide">
-        <label for="checkbox1" onClick="save()"><input type="checkbox" id="checkbox1"> Automatisch
-            aktualisieren</input></label>
+        <label for="checkbox1"><input type="checkbox" id="checkbox1"> Automatisch
+            aktualisieren</label>
     </div>
     <script>
-        // Save status of checkbox.
-        function save() {
-            var checkbox = document.getElementById("checkbox1");
-            localStorage.setItem("checkbox1", checkbox.checked);
-            location.reload();
-        }
-        // Get status of checkbox.
-        var checked = JSON.parse(localStorage.getItem("checkbox1"));
-        document.getElementById("checkbox1").checked = checked;
+        // Status der Checkbox speichern und wiederherstellen (ohne Inline-Handler).
+        var checkbox1 = document.getElementById("checkbox1");
+        checkbox1.checked = JSON.parse(localStorage.getItem("checkbox1") || "false");
+        checkbox1.addEventListener("change", function () {
+            localStorage.setItem("checkbox1", checkbox1.checked);
+        });
     
         // Reload if checkbox is checked.
         if (checkbox1.checked == true) {
     
-     // Set single div every 15 sec.
+     // Set single div every 60 sec.
             setInterval(function () {
-    window.location.reload(true);
-               }, 15000);
+    window.location.reload();
+               }, 60000);
     
     document.addEventListener("DOMContentLoaded", function(){
       window.location.href = '#usermap';
@@ -60,8 +56,9 @@
         window.addEventListener("load", function() 
         {
         let schaltflaeche1 = document.getElementById("btn1");
-        schaltflaeche1.addEventListener("click", function() 
+        schaltflaeche1.addEventListener("click", function()
         {
+        if (window.kartenMap) return; // Karte nur einmal erzeugen
         sessionStorage.setItem("mapalert", "ok");
         document.getElementById("hinweis").style.display = "none";
         var topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
@@ -82,13 +79,6 @@
         });
     
     
-    const layer = { 
-        "titel" : osm,
-        "isbn" : "344254565X",
-        "autor" : "Pratchet",
-        "pubdate" : "15.8.2005"
-    };
-    
     switch (maplayer) {
         case 1:
            maplayer = osm;
@@ -106,7 +96,6 @@
     maplayer = osm;
         };
     let layers = maplayer;
-    console.log(layers);
         var map = L.map('map', {
         center: center,
         zoom: zoom,
@@ -129,7 +118,7 @@
     
     var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
     
-    L.control.polylineMeasure(options).addTo(map);
+    L.control.polylineMeasure().addTo(map);
         
     const ZoomViewer = L.Control.extend({
             onAdd() {
@@ -146,4 +135,13 @@
             }
         });
      const zoomViewerControl = (new ZoomViewer()).addTo(map);
-     
+
+     // Globale Referenz, damit der Footer (createMarkers) auf die Karte zugreifen kann
+     window.kartenMap = map;
+     // Marker aus den Eintrags-Divs erzeugen (Funktion ist im Footer definiert,
+     // steht aber spaetestens zum Zeitpunkt des Klicks bereit)
+     window.createMarkers(window.kartenMap);
+     }, false); // Ende btn1-Click-Listener
+     } ); // Ende window load
+     </script>
+    

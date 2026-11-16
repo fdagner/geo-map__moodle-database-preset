@@ -1,8 +1,19 @@
 <style>
 	#map { width:100%;max-width:1400px;aspect-ratio: 8/4;}
 #[[Koordinate#id]] {
-    pointer-events: none; 
+    pointer-events: none;
 background-color: #f5f5f5;
+}
+/* Farb-Buttons statt Dropdown fuer das Menue-Feld "CSS-Farbe" */
+.farbwahl { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0; }
+.farbwahl button {
+    width: 42px; height: 42px; border-radius: 8px; cursor: pointer;
+    border: 3px solid #ccc; font-size: 10px; line-height: 1; color: #222;
+    padding: 0;
+}
+.farbwahl button.aktiv {
+    border-color: #0f6cbf;
+    box-shadow: 0 0 0 3px rgba(15,108,191,0.35);
 }
 	  </style>
    <p>Klicke auf die Karte um die gewünschten Koordinaten zu erhalten.</p>
@@ -19,16 +30,17 @@ background-color: #f5f5f5;
    var coordinates="";
    var popup = L.popup();
 	   function onMapClick(e) {
-		   popup
-			   .setLatLng(e.latlng)
-			   .setContent('Koordinate:  ' + e.latlng.toString().replace("LatLng",""))
-			   .openOn(map);
-   coordinates = e.latlng.toString().replace("LatLng","").replace("(","").replace(")","");      
+   // Immer im selben Format wie spaeter auf der Karte gespeichert (ohne Klammern, 6 Nachkommastellen)
+   coordinates = e.latlng.lat.toFixed(6) + ', ' + e.latlng.lng.toFixed(6);
+   popup
+	   .setLatLng(e.latlng)
+	   .setContent('Koordinate:  ' + coordinates)
+	   .openOn(map);
    document.querySelector("[title='Koordinate'] input.basefieldinput").value=coordinates;
 	   }
-   
+
 	   map.on('click', onMapClick);
-   map.addControl( new L.Control.Search({
+   var searchControl = new L.Control.Search({
 		url: 'https://nominatim.openstreetmap.org/search?format=json&q={s}',
 		jsonpParam: 'json_callback',
 		propertyName: 'display_name',
@@ -36,9 +48,17 @@ background-color: #f5f5f5;
 		marker: L.circleMarker([0,0],{radius:30}),
 		autoCollapse: true,
 		autoType: false,
-		minLength: 2,
+		// Nominatim schonen: seltener und spaeter automatisch suchen
+		minLength: 4,
+		delayType: 800,
                zoom: 14
-	}) );
+	});
+   map.addControl(searchControl);
+   // Auch Suchergebnisse in das Koordinaten-Feld uebernehmen
+   searchControl.on('search:locationfound', function(e) {
+   coordinates = e.latlng.lat.toFixed(6) + ', ' + e.latlng.lng.toFixed(6);
+   document.querySelector("[title='Koordinate'] input.basefieldinput").value=coordinates;
+   });
 const ZoomViewer = L.Control.extend({
 		onAdd() {
 			const container = L.DomUtil.create('div');
@@ -77,10 +97,64 @@ const ZoomViewer = L.Control.extend({
    </tr>
    </tbody>
    </table>
-   <div class="hidden">
-   <label for="[[ID#id]]"><span class="accesshide">ID</span></label>
-   <input class="basefieldinput form-control d-inline mod-data-input" type="text" name="[[ID#id]]" id="[[ID#id]]" value=""></div>
    <script>
-   let idnummer = Math.round(Date.now() + Math.random());
-   document.getElementById("[[ID#id]]").value = idnummer;
-   </script> 
+   // Koordinaten-Feld gegen manuelle Eingabe sperren (pointer-events:none blockt nicht die Tastatur/Tab)
+   // und vor dem Speichern pruefen, ob eine echte Koordinate drin steht (Pflichtfeld-Pruefung von
+   // Moodle akzeptiert auch ein einzelnes Leerzeichen!)
+   var koordInput = document.querySelector("[title='Koordinate'] input.basefieldinput");
+   if (koordInput) {
+       koordInput.readOnly = true;
+
+       document.querySelector('form').addEventListener('submit', function(e) {
+           var wert = koordInput.value.trim();
+           var gueltig = /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(wert);
+           if (!gueltig) {
+               e.preventDefault();
+               alert('Bitte zuerst auf die Karte klicken, um die Koordinate festzulegen!');
+           }
+       });
+   }
+   </script>
+   <script>
+   // Farb-Buttons statt Dropdown fuer das Menue-Feld "CSS-Farbe".
+   // Die Buttons werden automatisch aus den Optionen des Felds erzeugt:
+   // Farben aendern/ergaenzen geht daher in Moodle unter
+   // Datenbank -> Felder verwalten -> CSS-Farbe -> Optionen (eine Farbe pro Zeile).
+   (function() {
+       var select = document.getElementById('[[CSS-Farbe#id]]');
+       if (!select || select.tagName !== 'SELECT') return;
+
+       var container = document.createElement('div');
+       container.className = 'farbwahl';
+
+       Array.from(select.options).forEach(function(opt) {
+           var farbe = opt.value;
+           if (!farbe) return; // "Bitte auswählen"-Leeroption überspringen
+
+           var btn = document.createElement('button');
+           btn.type = 'button';
+           btn.title = opt.text;
+           btn.setAttribute('aria-label', opt.text);
+
+           if (window.CSS && CSS.supports && CSS.supports('color', farbe)) {
+               btn.style.background = farbe;
+           } else {
+               // Kein gültiger Farbname/Hex-Code -> Text statt Fläche anzeigen
+               btn.textContent = farbe;
+           }
+           if (opt.selected) btn.classList.add('aktiv');
+
+           btn.addEventListener('click', function() {
+               select.value = farbe;
+               container.querySelectorAll('button.aktiv').forEach(function(b) {
+                   b.classList.remove('aktiv');
+               });
+               btn.classList.add('aktiv');
+           });
+           container.appendChild(btn);
+       });
+
+       select.style.display = 'none';
+       select.parentNode.insertBefore(container, select);
+   })();
+   </script>
