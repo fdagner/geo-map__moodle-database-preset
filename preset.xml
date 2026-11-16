@@ -35,12 +35,6 @@
 </field>
 
 <field>
-<type>text</type>
-<name>ID</name>
-<required>0</required>
-</field>
-
-<field>
 <type>menu</type>
 <name>CSS-Farbe</name>
 <required>0</required>
